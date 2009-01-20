@@ -1,7 +1,7 @@
 /*
 Author: Ruslanas Balčiūnas
 URL: http://code.ruslanas.com
-jQuery plugen for url shortening uses bit.ly API
+jQuery plugin for url shortening uses bit.ly API
 */
 
 jQuery.fn.shortenUrl = function(url) {
