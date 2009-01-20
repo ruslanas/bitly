@@ -45,12 +45,13 @@ class Bitly {
         curl_setopt($ch, CURLOPT_USERPWD, $this->login . ':' . $this->apiKey);
         curl_setopt ($ch, CURLOPT_POST, 1);
         curl_setopt ($ch, CURLOPT_POSTFIELDS, $postFields);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         $response = curl_exec($ch); 
          
         curl_close($ch); 
         
-        return $response[0];
+        return $response;
     }
 
     function info($bitlyUrl)
