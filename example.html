@@ -13,6 +13,16 @@
         }
         $(document).ready( function() {
             $('a.shortened').addPreview();
+            $('a.shortened').click( function() {
+                    $(this).stats( function(dat) {
+                            try {
+                                console.info(dat);
+                            } catch (e) {
+                                // .. ignore
+                            }
+                            return false;
+                    });
+            });
         });
         </script>
     </head>
@@ -20,7 +30,8 @@
         <div>
         <a href="http://bit.ly/18YSrx" class="shortened">http://bit.ly/18YSrx</a>
         </div>
-        <label for="msg">Message:</label>
+        <label for="msg">Message (paste text with any number of web addresses
+        starting with http:// and press Shorten):</label>
         <br/>
         <textarea id="msg" cols="50" rows="3"></textarea>
         <br/>
