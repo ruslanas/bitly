@@ -10,10 +10,17 @@
         function shorten() {
             $('#msg').shortenUrl('shorten.php');
         }
+        $(document).ready( function() {
+            $('a.shortened').addPreview();
+        });
         </script>
     </head>
     <body>
+        <div>
+        <a href="http://bit.ly/18YSrx" class="shortened">http://bit.ly/18YSrx</a>
+        </div>
         <label for="msg">Message:</label>
+        <br/>
         <textarea id="msg" cols="50" rows="3"></textarea>
         <br/>
         <input type="button" value="Shorten" onclick="shorten()"/>
