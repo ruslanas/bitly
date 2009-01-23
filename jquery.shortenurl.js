@@ -33,7 +33,7 @@ jQuery.fn.addPreview = function() {
         var elm = this;
         jQuery.post('shorten.php', {
             'url' : this.href
-            'action' : 'info';
+            'action' : 'info'
         },
             function(data) {
                 for(var key in data.results) {
