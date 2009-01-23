@@ -47,9 +47,9 @@ jQuery.fn.addPreview = function() {
                     jQuery('#htmlTitle').html(d.htmlTitle);
                 }
             }, 'json');
-        jQuery('#preview').show();
+        jQuery('#preview').fadeIn();
     }, function() {
-        jQuery('#preview').hide();
+        jQuery('#preview').fadeOut();
     });
     
     jQuery(this).mousemove( function(e) {

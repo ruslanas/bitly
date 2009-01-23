@@ -1,3 +1,5 @@
 #preview {
     position: absolute;
+    padding: 0 0.5em;
+    background: #CCC;
 }
