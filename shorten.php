@@ -9,7 +9,7 @@ include('lib/bitly.class.php');
 
 $bitly = new Bitly($login, $apiKey);
 
-$supported = array('shorten', 'stat', 'info');
+$supported = array('shorten', 'stats', 'info');
 
 if( in_array($_POST['action'], $supported)) {
     echo $bitly->{$_POST['action']}($_POST['url']);
