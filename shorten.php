@@ -11,7 +11,7 @@ $bitly = new Bitly($login, $apiKey);
 
 $supported = array('shorten', 'stat', 'info');
 
-if( in_array($_POST['action']), $supported) {
+if( in_array($_POST['action'], $supported)) {
     echo $bitly->{$_POST['action']}($_POST['url']);
 } else {
     die('Unsupported method!');
