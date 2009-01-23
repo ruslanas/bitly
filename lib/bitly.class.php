@@ -5,19 +5,44 @@ http://code.ruslanas.com
 */
 
 class Bitly {
+    /**
+     * Adress of web service
+     *
+     * @var string
+     */
+    protected $api = 'http://api.bit.ly/';
+    private $format = 'json';
+    private $version = '2.0.1';
+    private $validActions = array('shorten', 'stats', 'info', 'expand');
 
-    function Bitly($login, $apiKey, $version = '2.0.1')
+    function Bitly($login, $apiKey)
     {
         $this->login = $login;
         $this->apiKey = $apiKey;
-        $this->version = $version;
-        $this->format = 'json';
     	return true;
     }
 
+    function validAction($action)
+    {
+        if( in_array($action, $this->validActions)) {
+            return true;
+        }
+        $this->errorMessage = "Undefined method $action";
+    	return false;
+    }
+
+    function error()
+    {
+        $ret = array(
+            "errorCode" => 202,
+            "errorMessage" => $this->errorMessage,
+            "statusCode" => "ERROR"
+            );
+    	return json_encode($ret);
+    }
+    
     function shorten($message)
     {
-        $url = 'http://api.bit.ly/shorten';
 
         $postFields = '';
         
@@ -30,21 +55,36 @@ class Bitly {
                 $postFields .= '&longUrl=' . urlencode( $curr);
             }
         }
+
         if( !strlen($postFields)) {
             return false;
         }
-        return $this->process($url, $postFields);
+        return $this->process('shorten', $postFields);
     }
 
-    function process($url, $postFields) {
-        $ch = curl_init($url); 
+    /**
+     * Expand hash or url
+     *
+     */
+    function expand($message)
+    {
+        if( strstr($message, 'http://bit.ly')) {
+            $postFields = '&shortUrl=' . $message;
+        } else {
+            $postFields = '&hash=' . $message;
+        }
+    	return $this->proccess('expand', $postFields);
+    }
+
+    function process($action, $postFields) {
+        $ch = curl_init($this->api . $action); 
         
         $postFields = 'version=' . $this->version . $postFields;
         $postFields .= '&format=' . $this->format;
 
         curl_setopt($ch, CURLOPT_USERPWD, $this->login . ':' . $this->apiKey);
-        curl_setopt ($ch, CURLOPT_POST, 1);
-        curl_setopt ($ch, CURLOPT_POSTFIELDS, $postFields);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         $response = curl_exec($ch); 
@@ -56,8 +96,6 @@ class Bitly {
 
     function info($bitlyUrl)
     {
-        $url = 'http://api.bit.ly/info';
-
         // validate url
         if( !strstr($bitlyUrl, 'http://bit.ly')) {
             return false;
@@ -65,14 +103,13 @@ class Bitly {
         $a = split('\/', $bitlyUrl);
         $hash = $a[ sizeof($a) - 1];
         $postFields = '&hash=' . $hash;
-        return $this->process($url, $postFields);
+        return $this->process('info', $postFields);
     }
     
     function stats($shortUrl)
     {
-    	$url = 'http://api.bit.ly/stats';
         $postFields = '&shortUrl=' . $shortUrl;
-        return $this->process($url, $postFields);
+        return $this->process('stats', $postFields);
     }
     
     function setReturnFormat($format = 'json')

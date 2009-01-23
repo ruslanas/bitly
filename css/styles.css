@@ -1,5 +1,7 @@
 #preview {
+    font-family: Verdana, Arial, sans-serif;
     position: absolute;
-    padding: 0 0.5em;
+    display: none;
+    padding: 0.5em;
     background: #CCC;
 }

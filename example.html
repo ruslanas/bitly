@@ -4,37 +4,44 @@
 	<head> 
 		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
 		<title>Bitly Plugin Example</title> 
-		<script type="text/javascript" src="/js/jquery-1.2.2.min.js"></script> 
         <link href="css/styles.css" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="/js/jquery-1.2.2.min.js"></script> 
 		<script type="text/javascript" src="jquery.shortenurl.js"></script>
         <script type="text/javascript">
         function shorten() {
-            $('#msg').shortenUrl('shorten.php');
+            $('#msg').shortenUrl();
         }
         $(document).ready( function() {
-            $('a.shortened').addPreview();
-            $('a.shortened').click( function() {
-                    $(this).stats( function(dat) {
-                            try {
-                                console.info(dat);
-                            } catch (e) {
-                                // .. ignore
-                            }
-                    });
-                    return false;
+            $('div.shortened a').addPreview();
+            $('div.shortened a').click( function() {
+                $(this).stats( function(dat) {
+                    try {
+                        console.info(dat);
+                    } catch (e) {
+                        // .. ignore
+                    }
+                });
+                return false;
             });
         });
         </script>
     </head>
     <body>
-        <div>
-        <a href="http://bit.ly/18YSrx" class="shortened">http://bit.ly/18YSrx</a>
+        <div class="shortened">
+            <p>Place mouse pointer over link.</p>
+            <ul>
+                <li>Web page: <a href="http://bit.ly/18YSrx">http://bit.ly/18YSrx</a></li>
+                <li>MP3 file: <a href="http://bit.ly/SdgN">http://bit.ly/SdgN</a></li>
+                <li><a href="http://bit.ly/2V6CFi">http://bit.ly/2V6CFi</a>
+            </ul>
         </div>
-        <label for="msg">Message (paste text with any number of web addresses
-        starting with http:// and press Shorten):</label>
-        <br/>
-        <textarea id="msg" cols="50" rows="3"></textarea>
-        <br/>
-        <input type="button" value="Shorten" onclick="shorten()"/>
+        <form action="" method="post" onsubmit="return false;">
+            <label for="msg">Message (paste text with any number 
+            of web addresses starting with http:// and press Shorten):</label>
+            <br/>
+            <textarea id="msg" cols="50" rows="3"></textarea>
+            <br/>
+            <input type="button" value="Shorten" onclick="shorten()"/>
+        </form>
     </body>
 </html>
