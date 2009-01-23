@@ -14,7 +14,10 @@ jQuery.fn.shortenUrl = function(url) {
         if( !long) {
             return false;
         }
-        jQuery.post(url, {'longUrl' : long}, function(data, status) {
+        jQuery.post(url, {
+            'action' : 'shorten',
+            'url' : long
+        }, function(data, status) {
                 var dat = data.results;
                 for(var key in dat) {
                     elm.val( elm.val().replace(key, dat[key].shortUrl));
@@ -28,7 +31,10 @@ jQuery.fn.addPreview = function() {
     $("body").append('<div id="preview"><div id="htmlTitle"/><img src=""/><div id="long"/></div>');
     jQuery(this).hover( function() {
         var elm = this;
-        jQuery.post('shorten.php', {'bitlyUrl' : this.href},
+        jQuery.post('shorten.php', {
+            'url' : this.href
+            'action' : 'info';
+        },
             function(data) {
                 for(var key in data.results) {
                     var d = data.results[key];

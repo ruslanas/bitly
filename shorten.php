@@ -9,13 +9,11 @@ include('lib/bitly.class.php');
 
 $bitly = new Bitly($login, $apiKey);
 
-if( !empty( $_POST['longUrl'])) {
-    echo $bitly->shorten( $_POST['longUrl']);
-    exit;
-}
+$supported = array('shorten', 'stat', 'info');
 
-if( !empty( $_POST['bitlyUrl'])) {
-    echo $bitly->info( $_POST['bitlyUrl']);
-    exit;
+if( in_array($_POST['action']), $supported) {
+    echo $bitly->{$_POST['action']}($_POST['url']);
+} else {
+    die('Unsupported method!');
 }
 ?>
