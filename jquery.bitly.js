@@ -4,10 +4,40 @@ URL: http://code.ruslanas.com
 jQuery plugin for url shortening uses bit.ly API
 */
 
+function dataHandler() {
+}
+
+dataHandler.prototype.proccess = function(data) {
+    if( data.statusCode == 'OK') {
+        this.onSucc( data.results);
+    } else {
+        this.onError( data.errorMessage);
+    }
+    return true;
+}
+
+dataHandler.prototype.onError = function(message) {
+    alert(message);
+}
+
+jQuery.fn.bitly = function(action, func) {
+    var dh = new dataHandler();
+    dh.onSucc = func;
+    var urls = new Array();
+    this.each( function() {
+        var elm = jQuery(this);
+        urls.push( elm.attr('href').split('/').reverse().shift());
+    });
+    jQuery.post('bitly.php', {
+        'action' : action,
+        'url' : urls.join(',')
+    }, function(data) { return dh.proccess(data);}, 'json');
+}
+
 jQuery.fn.shorten = function(func) {
     return this.each( function() {
         var elm = jQuery(this);
-        jQuery.post('shorten.php', {
+        jQuery.post('bitly.php', {
             'action' : 'shorten',
             'url' : elm.attr('href')
         }, func, 'json');
@@ -17,7 +47,7 @@ jQuery.fn.shorten = function(func) {
 jQuery.fn.stats = function(func) {
     return this.each( function() {
         var elm = jQuery(this);
-        jQuery.post('shorten.php', {
+        jQuery.post('bitly.php', {
             'action' : 'stats',
             'url' : elm.attr('href')
         }, func, 'json');
@@ -27,7 +57,7 @@ jQuery.fn.stats = function(func) {
 jQuery.fn.info = function(func) {
     return this.each( function() {
         var elm = jQuery(this);
-        jQuery.post('shorten.php', {
+        jQuery.post('bitly.php', {
             'action' : 'info',
             'url' : elm.attr('href')
         }, func, 'json');
@@ -42,7 +72,7 @@ jQuery.fn.shortenUrl = function() {
             return false;
         }
         var parameters = {'action' : 'shorten', 'url' : long};
-        jQuery.post('shorten.php', parameters, function(data, status) {
+        jQuery.post('bitly.php', parameters, function(data, status) {
                 var dat = data.results;
                 for(var key in dat) {
                     elm.val( elm.val().replace(key, dat[key].shortUrl));
@@ -67,7 +97,6 @@ function infoHandler(data) {
         }
         preview.append('<div>' + longUrl + '</div>');
     }
-    preview.fadeIn();
 }
 
 jQuery.fn.addPreview = function() {
@@ -77,7 +106,8 @@ jQuery.fn.addPreview = function() {
         $('body').append('<div id="preview"/>');
         var elm = this;
         var parameters = {'url' : this.href, 'action' : 'info'};
-        jQuery.post('shorten.php', parameters, infoHandler, 'json');
+        jQuery.post('bitly.php', parameters, infoHandler, 'json');
+        jQuery('#preview').fadeIn();
     }, function() {
         jQuery('#preview').fadeOut().remove();
     });

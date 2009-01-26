@@ -76,7 +76,7 @@ class Bitly {
     	return $this->proccess('expand', $postFields);
     }
 
-    function process($action, $postFields) {
+    private function process($action, $postFields) {
         $ch = curl_init($this->api . $action); 
         
         $postFields = 'version=' . $this->version . $postFields;
@@ -94,15 +94,15 @@ class Bitly {
         return $response;
     }
 
+    /**
+     * Accept hash, shortUrl or array as argument
+     * 
+     * Return array
+     */
     function info($bitlyUrl)
     {
-        // validate url
-        if( !strstr($bitlyUrl, 'http://bit.ly')) {
-            return false;
-        }
-        $a = split('\/', $bitlyUrl);
-        $hash = $a[ sizeof($a) - 1];
-        $postFields = '&hash=' . $hash;
+        $bitlyUrl = str_replace('http://bit.ly/', '', $bitlyUrl);
+        $postFields = '&hash=' . $bitlyUrl;
         return $this->process('info', $postFields);
     }
     
