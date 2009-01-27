@@ -65,7 +65,7 @@ class Bitly {
     function expand($message)
     {
         $postFields = '&hash=' . $this->getHash($message);
-    	return $this->proccess('expand', $postFields);
+    	return $this->process('expand', $postFields);
     }
 
     function info($bitlyUrl)
