@@ -1,9 +1,13 @@
 #preview {
     font-family: Verdana, Arial, sans-serif;
     position: absolute;
-    display: none;
+    display: table;
     width: 260px;
     height: 50px;
     padding: 0.5em;
     background: #CCC;
+}
+
+#preview h1 {
+    font-size: 1em;
 }

@@ -8,19 +8,43 @@
 		<script type="text/javascript" src="/js/jquery-1.2.2.min.js"></script> 
 		<script type="text/javascript" src="jquery.bitly.js"></script>
         <script type="text/javascript">
-        function shorten() {
-            $('#msg').shortenUrl();
+        function statsHandler(dat) {
+            console.info(dat);
         }
-        $(document).ready( function() {
-            $('div.shortened a').addPreview();
-            $('div.shortened a').click( function() {
-                $(this).stats( function(dat) {
-                    try {
-                        console.info(dat);
-                    } catch (e) {
-                        // .. ignore
+
+        function infoHandler(data) {
+            var preview = $('#preview');
+            preview.children().remove();
+            for(var key in data) {
+                var d = data[key];
+                var thumb = d.thumbnail.medium;
+                if( d.contentType == 'text/html') {
+                    preview.append('<h1>' + d.htmlTitle + '</h1>');
+                    preview.append('<div>' + d.htmlMetaDescription + '</div>');
+                }
+                if( d.contentType == 'audio/mpeg') {
+                    for(var label in d.id3) {
+                        preview.append('<div>' + label + ': ' + d.id3[label] + '</div>');
                     }
-                });
+                    var size = Math.round( d.contentLegth / 1024);
+                    preview.append('<div>Size: ' + size + ' Kb</div>');
+                }
+        
+                if(thumb) {
+                    preview.append('<img src="' + thumb + '"/>');
+                }
+                var longUrl = d.longUrl.replace('http://', '');
+                if( longUrl.length > 25) {
+                    longUrl = longUrl.substring(0, 25) + '&raquo;';
+                }
+                preview.append('<div>' + longUrl + '</div>');
+            }
+        }
+
+        $(document).ready( function() {
+            $('div.shortened a').addPreview(infoHandler);
+            $('div.shortened a').click( function() {
+                $(this).bitly('stats', statsHandler);
                 return false;
             });
         });
@@ -32,7 +56,7 @@
             <ul>
                 <li>Web page: <a href="http://bit.ly/18YSrx">http://bit.ly/18YSrx</a></li>
                 <li>MP3 file: <a href="http://bit.ly/SdgN">http://bit.ly/SdgN</a></li>
-                <li><a href="http://bit.ly/2V6CFi">http://bit.ly/2V6CFi</a>
+                <li>Image: <a href="http://bit.ly/jVFH">http://bit.ly/jVFH</a></li>
             </ul>
         </div>
         <form action="" method="post" onsubmit="return false;">
@@ -41,7 +65,7 @@
             <br/>
             <textarea id="msg" cols="50" rows="3"></textarea>
             <br/>
-            <input type="button" value="Shorten" onclick="shorten()"/>
+            <input type="button" value="Shorten" onclick="$('#msg').shortenUrl()"/>
         </form>
     </body>
 </html>

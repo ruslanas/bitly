@@ -1,15 +1,11 @@
 <?php
 /*
 Author: Ruslanas Balčiūnas
-http://code.ruslanas.com
+http://bitly.googlecode.com
 */
 
 class Bitly {
-    /**
-     * Adress of web service
-     *
-     * @var string
-     */
+
     protected $api = 'http://api.bit.ly/';
     private $format = 'json';
     private $version = '2.0.1';
@@ -27,14 +23,18 @@ class Bitly {
         if( in_array($action, $this->validActions)) {
             return true;
         }
+        $this->errorCode = 202;
         $this->errorMessage = "Undefined method $action";
     	return false;
     }
 
     function error()
     {
+        if( empty( $this->errorMessage) && empty( $this->errorCode)) {
+            return false;
+        }
         $ret = array(
-            "errorCode" => 202,
+            "errorCode" => $this->errorCode,
             "errorMessage" => $this->errorMessage,
             "statusCode" => "ERROR"
             );
@@ -48,9 +48,9 @@ class Bitly {
         
         preg_match_all("/http(s?):\/\/[^( |$|\]|,|\"|')]+/", $message, $matches);
         
-        for($i=0;$i<sizeof($matches[0]);$i++) {
+        for($i=0;$i<sizeof( $matches[0]);$i++) {
             $curr = $matches[0][$i];
-            // do not shorten bitly urls
+            // ignore bitly urls
             if( !strstr($curr, 'http://bit.ly')) {
                 $postFields .= '&longUrl=' . urlencode( $curr);
             }
@@ -62,22 +62,28 @@ class Bitly {
         return $this->process('shorten', $postFields);
     }
 
-    /**
-     * Expand hash or url
-     *
-     */
     function expand($message)
     {
-        if( strstr($message, 'http://bit.ly')) {
-            $postFields = '&shortUrl=' . $message;
-        } else {
-            $postFields = '&hash=' . $message;
-        }
+        $postFields = '&hash=' . $this->getHash($message);
     	return $this->proccess('expand', $postFields);
     }
 
+    function info($bitlyUrl)
+    {
+        $postFields = '&hash=' . $this->getHash($bitlyUrl);
+        return $this->process('info', $postFields);
+    }
+
+    function stats($bitlyUrl)
+    {
+        // Take only first hash or url. Ignore others.
+        $a = split(',', $bitlyUrl);
+        $postFields = '&hash=' . $this->getHash($a[0]);
+        return $this->process('stats', $postFields);
+    }
+    
     private function process($action, $postFields) {
-        $ch = curl_init($this->api . $action); 
+        $ch = curl_init( $this->api . $action); 
         
         $postFields = 'version=' . $this->version . $postFields;
         $postFields .= '&format=' . $this->format;
@@ -94,28 +100,22 @@ class Bitly {
         return $response;
     }
 
-    /**
-     * Accept hash, shortUrl or array as argument
-     * 
-     * Return array
-     */
-    function info($bitlyUrl)
-    {
-        $bitlyUrl = str_replace('http://bit.ly/', '', $bitlyUrl);
-        $postFields = '&hash=' . $bitlyUrl;
-        return $this->process('info', $postFields);
-    }
-    
-    function stats($shortUrl)
-    {
-        $postFields = '&shortUrl=' . $shortUrl;
-        return $this->process('stats', $postFields);
-    }
-    
     function setReturnFormat($format = 'json')
     {
     	$this->format = $format;
         return $this->format;
+    }
+
+    function getHash($message)
+    {
+    	return str_replace('http://bit.ly/', '', $message);
+    }
+    
+    function shortenSingle($url)
+    {
+        $postFields = '&longUrl=' . $url;
+    	$data = json_decode( $this->process('shorten', $postFields), true);
+        return $data['results'][$url]['shortUrl'];
     }
 }
 ?>

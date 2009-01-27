@@ -1,113 +1,87 @@
 /*
 Author: Ruslanas Balčiūnas
-URL: http://code.ruslanas.com
-jQuery plugin for url shortening uses bit.ly API
+http://bilty.googlecode.com
 */
 
-function dataHandler() {
+function bitlyDataHandler() {
+    // .. void
 }
 
-dataHandler.prototype.proccess = function(data) {
+bitlyDataHandler.prototype.proccess = function(data) {
     if( data.statusCode == 'OK') {
-        this.onSucc( data.results);
+        this.onSuccess( data.results);
     } else {
-        this.onError( data.errorMessage);
+        this.onError( data.errorCode, data.errorMessage);
     }
     return true;
 }
 
-dataHandler.prototype.onError = function(message) {
-    alert(message);
+bitlyDataHandler.prototype.onSuccess = function(data) {
+    try {
+        console.info(data);
+    } catch(e) {
+        // .. ignore
+    }
 }
 
-jQuery.fn.bitly = function(action, func) {
-    var dh = new dataHandler();
-    dh.onSucc = func;
+bitlyDataHandler.prototype.onError = function(code, message) {
+    try {
+        console.info('Bitly error: ' + code + '\n' + message);
+    } catch(e) {
+        // .. ignore
+    }
+}
+
+jQuery.fn.bitly = function(action, func, options) {
+    var opts = jQuery.extend({}, jQuery.fn.bitly.defaults, options);
+    var dh = new bitlyDataHandler();
+    if( typeof(func) == 'function') {
+        dh.onSuccess = func;
+    }
     var urls = new Array();
     this.each( function() {
         var elm = jQuery(this);
-        urls.push( elm.attr('href').split('/').reverse().shift());
+        var message = elm.val();
+        if( !message) {
+            message = elm.attr('href');
+        }
+        urls.push(message);
     });
-    jQuery.post('bitly.php', {
+
+    jQuery.post( opts.url, {
         'action' : action,
         'url' : urls.join(',')
     }, function(data) { return dh.proccess(data);}, 'json');
 }
 
-jQuery.fn.shorten = function(func) {
-    return this.each( function() {
-        var elm = jQuery(this);
-        jQuery.post('bitly.php', {
-            'action' : 'shorten',
-            'url' : elm.attr('href')
-        }, func, 'json');
-    });
-}
-
-jQuery.fn.stats = function(func) {
-    return this.each( function() {
-        var elm = jQuery(this);
-        jQuery.post('bitly.php', {
-            'action' : 'stats',
-            'url' : elm.attr('href')
-        }, func, 'json');
-    });
-}
-
-jQuery.fn.info = function(func) {
-    return this.each( function() {
-        var elm = jQuery(this);
-        jQuery.post('bitly.php', {
-            'action' : 'info',
-            'url' : elm.attr('href')
-        }, func, 'json');
-    });
+jQuery.fn.bitly.defaults = {
+    url: 'bitly.php'
 }
 
 jQuery.fn.shortenUrl = function() {
-    return this.each(function(){
+    return this.each( function(){
         var elm = jQuery(this);
         var long = elm.val();
         if( !long) {
             return false;
         }
-        var parameters = {'action' : 'shorten', 'url' : long};
-        jQuery.post('bitly.php', parameters, function(data, status) {
-                var dat = data.results;
-                for(var key in dat) {
-                    elm.val( elm.val().replace(key, dat[key].shortUrl));
-                }
-            }, 'json')
+        elm.bitly('shorten', function(data) {
+            for(var url in data) {
+                elm.val( elm.val().replace(url, data[url].shortUrl));
+            }
+        });
     });
 }
 
-function infoHandler(data) {
-    jQuery('#preview *').remove();
-    var preview = jQuery('#preview');
-    for(var key in data.results) {
-        var d = data.results[key];
-        var thumb = d.thumbnail.medium;
-        preview.append('<div>' + d.htmlTitle + '</div>');
-        if(thumb) {
-            preview.append('<img src="' + thumb + '"/>');
-        }
-        var longUrl = d.longUrl.replace('http://', '');
-        if( longUrl.length > 25) {
-            longUrl = longUrl.substring(0, 25) + '&raquo;';
-        }
-        preview.append('<div>' + longUrl + '</div>');
-    }
-}
-
-jQuery.fn.addPreview = function() {
+jQuery.fn.addPreview = function(func) {
     var xOffset = 5;
     var yOffset = 5;
+
     jQuery(this).hover( function() {
-        $('body').append('<div id="preview"/>');
+        var p = jQuery('body').append('<div id="preview"/>');
         var elm = this;
-        var parameters = {'url' : this.href, 'action' : 'info'};
-        jQuery.post('bitly.php', parameters, infoHandler, 'json');
-        jQuery('#preview').fadeIn();
+        jQuery(this).bitly('info', func);
+        p.fadeIn();
     }, function() {
         jQuery('#preview').fadeOut().remove();
     });
