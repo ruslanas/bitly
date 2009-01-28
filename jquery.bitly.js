@@ -14,7 +14,7 @@ bitlyDataHandler.prototype.proccess = function(data) {
         this.onError( data.errorCode, data.errorMessage);
     }
     return true;
-}
+};
 
 bitlyDataHandler.prototype.onSuccess = function(data) {
     try {
@@ -22,7 +22,7 @@ bitlyDataHandler.prototype.onSuccess = function(data) {
     } catch(e) {
         // .. ignore
     }
-}
+};
 
 bitlyDataHandler.prototype.onError = function(code, message) {
     try {
@@ -30,7 +30,7 @@ bitlyDataHandler.prototype.onError = function(code, message) {
     } catch(e) {
         // .. ignore
     }
-}
+};
 
 jQuery.fn.bitly = function(action, func, options) {
     var opts = jQuery.extend({}, jQuery.fn.bitly.defaults, options);
@@ -53,11 +53,11 @@ jQuery.fn.bitly = function(action, func, options) {
         'url' : urls.join(',')
     }, function(data) { return dh.proccess(data);}, 'json');
     return xhr;
-}
+};
 
 jQuery.fn.bitly.defaults = {
     url: 'bitly.php'
-}
+};
 
 jQuery.fn.shortenUrl = function() {
     return this.each( function(){
@@ -66,17 +66,22 @@ jQuery.fn.shortenUrl = function() {
         if( !long) {
             return false;
         }
+        
         elm.bitly('shorten', function(data) {
-            for(var url in data) {
-                elm.val( elm.val().replace(url, data[url].shortUrl));
+            var re = new RegExp("http://[^( |$|\\])]+", 'g');
+            var urls = elm.val().match(re);
+            for(var i=0;i<urls.length;i++) {
+                var url = urls[i];
+                elm.val( long.replace(url, data[url].shortUrl));
             }
         });
     });
-}
+};
 
-jQuery.fn.addPreview = function(func) {
-    var xOffset = 5;
-    var yOffset = 5;
+jQuery.fn.addPreview = function(func, options) {
+    var opts = jQuery.extend({}, jQuery.fn.addPreview.defaults, options);
+    var xOffset = opts.xOffset;
+    var yOffset = opts.yOffset;
     var xhr;
     jQuery(this).hover( function() {
         $('body').append('<div id="preview"/>');
@@ -91,4 +96,9 @@ jQuery.fn.addPreview = function(func) {
         var top = e.pageY + yOffset;
         jQuery("#preview").css("top", top + "px").css("left", left + "px");
     });
-}
+};
+
+jQuery.fn.addPreview.defaults = {
+    'xOffset': 10,
+    'yOffset': 10
+};

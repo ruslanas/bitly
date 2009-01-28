@@ -1,7 +1,7 @@
 <?php
 /*
 Author: Ruslanas Balčiūnas
-http://code.ruslanas.com/
+http://bitly.googlecode.com
 */
 
 function errorHandler($errno, $errstr, $errfile, $errline)
