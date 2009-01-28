@@ -1,13 +1,13 @@
 #preview {
-    font-family: Verdana, Arial, sans-serif;
+    font: 0.6em Verdana, Arial, sans-serif;
     position: absolute;
-    display: table;
-    width: 260px;
-    height: 50px;
+    display: none;
     padding: 0.5em;
-    background: #CCC;
+    background: #000;
+    color: #FFF;
 }
 
 #preview h1 {
     font-size: 1em;
+    text-align: center;
 }

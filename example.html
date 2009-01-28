@@ -13,46 +13,46 @@
         }
 
         function infoHandler(data) {
-            var preview = $('#preview');
-            preview.children().remove();
             for(var key in data) {
+                var preview = $('#preview');
+                preview.children().remove();
                 var d = data[key];
-                var thumb = d.thumbnail.medium;
+                var longUrl = d.longUrl.replace('http://', '');
                 if( d.contentType == 'text/html') {
+                    var thumb = d.thumbnail.medium;
                     preview.append('<h1>' + d.htmlTitle + '</h1>');
                     preview.append('<div>' + d.htmlMetaDescription + '</div>');
+                    if(thumb) {
+                        preview.append('<img src="' + thumb + '"/>');
+                    }
+                }
+                if( d.contentType == 'image/jpeg') {
+                    preview.append('<img src="http://' + longUrl + '" style="width: 250px"/>');
                 }
                 if( d.contentType == 'audio/mpeg') {
                     for(var label in d.id3) {
-                        preview.append('<div>' + label + ': ' + d.id3[label] + '</div>');
+                        preview.append('<div><span style="float: left;width:70px">' + label + ':</span> ' + d.id3[label] + '</div>');
                     }
                     var size = Math.round( d.contentLegth / 1024);
                     preview.append('<div>Size: ' + size + ' Kb</div>');
                 }
         
-                if(thumb) {
-                    preview.append('<img src="' + thumb + '"/>');
-                }
-                var longUrl = d.longUrl.replace('http://', '');
                 if( longUrl.length > 25) {
                     longUrl = longUrl.substring(0, 25) + '&raquo;';
                 }
-                preview.append('<div>' + longUrl + '</div>');
+                preview.append('<div>Source: ' + longUrl + '</div>');
+                preview.fadeIn();
             }
         }
 
         $(document).ready( function() {
             $('div.shortened a').addPreview(infoHandler);
-            $('div.shortened a').click( function() {
-                $(this).bitly('stats', statsHandler);
-                return false;
-            });
         });
         </script>
     </head>
     <body>
         <div class="shortened">
-            <p>Place mouse pointer over link.</p>
+            <p>Place mouse pointer over link to preview content.</p>
             <ul>
                 <li>Web page: <a href="http://bit.ly/18YSrx">http://bit.ly/18YSrx</a></li>
                 <li>MP3 file: <a href="http://bit.ly/SdgN">http://bit.ly/SdgN</a></li>
@@ -67,5 +67,7 @@
             <br/>
             <input type="button" value="Shorten" onclick="$('#msg').shortenUrl()"/>
         </form>
+        <hr/>
+        <a href="http://bitly.googlecode.com">http://bitly.googlecode.com</a>
     </body>
 </html>

@@ -9,7 +9,12 @@ class Bitly {
     protected $api = 'http://api.bit.ly/';
     private $format = 'json';
     private $version = '2.0.1';
-    private $validActions = array('shorten', 'stats', 'info', 'expand');
+    private $validActions = array(
+        'shorten',
+        'stats',
+        'info',
+        'expand'
+        );
 
     function Bitly($login, $apiKey)
     {
@@ -40,7 +45,7 @@ class Bitly {
             );
     	return json_encode($ret);
     }
-    
+
     function shorten($message)
     {
 

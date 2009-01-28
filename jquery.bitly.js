@@ -48,10 +48,11 @@ jQuery.fn.bitly = function(action, func, options) {
         urls.push(message);
     });
 
-    jQuery.post( opts.url, {
+    var xhr = jQuery.post( opts.url, {
         'action' : action,
         'url' : urls.join(',')
     }, function(data) { return dh.proccess(data);}, 'json');
+    return xhr;
 }
 
 jQuery.fn.bitly.defaults = {
@@ -76,16 +77,15 @@ jQuery.fn.shortenUrl = function() {
 jQuery.fn.addPreview = function(func) {
     var xOffset = 5;
     var yOffset = 5;
-
+    var xhr;
     jQuery(this).hover( function() {
-        var p = jQuery('body').append('<div id="preview"/>');
-        var elm = this;
-        jQuery(this).bitly('info', func);
-        p.fadeIn();
+        $('body').append('<div id="preview"/>');
+        xhr = jQuery(this).bitly('info', func);
     }, function() {
+        xhr.abort();
         jQuery('#preview').fadeOut().remove();
     });
-    
+
     jQuery(this).mousemove( function(e) {
         var left = e.pageX + xOffset;
         var top = e.pageY + yOffset;
