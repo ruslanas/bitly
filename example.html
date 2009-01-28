@@ -8,27 +8,28 @@
 		<script type="text/javascript" src="/js/jquery-1.2.2.min.js"></script> 
 		<script type="text/javascript" src="jquery.bitly.js"></script>
         <script type="text/javascript">
-        function statsHandler(dat) {
-            console.info(dat);
-        }
-
         function infoHandler(data) {
             for(var key in data) {
                 var preview = $('#preview');
                 preview.children().remove();
                 var d = data[key];
                 var longUrl = d.longUrl.replace('http://', '');
-                if( d.contentType == 'text/html') {
-                    preview.css('width', '256px');
+                if( d.contentType.match('text/html')) {
                     var thumb = d.thumbnail.medium;
-                    preview.append('<h1>' + d.htmlTitle + '</h1>');
-                    preview.append('<div>' + d.htmlMetaDescription + '</div>');
+                    preview.css('width', '256px')
+                        .append('<h1>' + d.htmlTitle + '</h1>')
+                        .append('<div>' + d.htmlMetaDescription + '</div>');
                     if(thumb) {
-                        preview.append('<img src="' + thumb + '"/>');
+                        var img = new Image();
+                        $(img).error(function(){});
+                        $(img).attr('src', thumb);
+                        $(img).load( function() {
+                            preview.append(this);
+                        });
                     }
                 }
                 if( d.contentType == 'image/jpeg') {
-                    preview.append('<img src="http://' + longUrl + '"/>');
+                    preview.append('<img src="' + d.longUrl + '"/>');
                 }
                 if( d.contentType == 'audio/mpeg') {
                     for(var label in d.id3) {
@@ -55,9 +56,10 @@
         <div class="shortened">
             <p>Place mouse pointer over link to preview content.</p>
             <ul>
-                <li>Web page: <a href="http://bit.ly/18YSrx">http://bit.ly/18YSrx</a></li>
-                <li>MP3 file: <a href="http://bit.ly/SdgN">http://bit.ly/SdgN</a></li>
-                <li>Image: <a href="http://bit.ly/jVFH">http://bit.ly/jVFH</a></li>
+                <li>Web page: <a href="http://bit.ly/18YSrx">bit.ly/18YSrx</a></li>
+                <li>MP3 file: <a href="http://bit.ly/SdgN">bit.ly/SdgN</a></li>
+                <li>Image: <a href="http://bit.ly/jVFH">bit.ly/jVFH</a></li>
+                <li>Long URL: <a href="http://music.ruslanas.com/">music.ruslanas.com</a></li>
             </ul>
         </div>
         <form action="" method="post" onsubmit="return false;">
@@ -69,6 +71,6 @@
             <input type="button" value="Shorten" onclick="$('#msg').shortenUrl()"/>
         </form>
         <hr/>
-        <a href="http://bitly.googlecode.com">http://bitly.googlecode.com</a>
+        <a href="http://bitly.googlecode.com">bitly.googlecode.com</a>
     </body>
 </html>

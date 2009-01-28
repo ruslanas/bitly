@@ -51,7 +51,7 @@ class Bitly {
 
         $postFields = '';
         
-        preg_match_all("/http(s?):\/\/[^( |$|\]|,|\"|')]+/", $message, $matches);
+        preg_match_all("/http(s?):\/\/[^( |$|\]|,|\"|')]+/i", $message, $matches);
         
         for($i=0;$i<sizeof( $matches[0]);$i++) {
             $curr = $matches[0][$i];
@@ -75,7 +75,8 @@ class Bitly {
 
     function info($bitlyUrl)
     {
-        $postFields = '&hash=' . $this->getHash($bitlyUrl);
+        $hash = $this->getHash($bitlyUrl);
+        $postFields = '&hash=' . $hash;
         return $this->process('info', $postFields);
     }
 
@@ -105,15 +106,21 @@ class Bitly {
         return $response;
     }
 
-    function setReturnFormat($format = 'json')
+    function setReturnFormat($format)
     {
     	$this->format = $format;
         return $this->format;
     }
 
+    // expect url, shortened url or hash
     function getHash($message)
     {
-    	return str_replace('http://bit.ly/', '', $message);
+        // if url and not bit.ly get shortened first
+        if( strstr($message, 'http://') && !strstr($message, 'http://bit.ly')) {
+            $message = $this->shortenSingle($message);
+        }
+        $hash = str_replace('http://bit.ly/', '', $message);
+        return $hash;
     }
     
     function shortenSingle($url)
