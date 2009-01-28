@@ -19,6 +19,7 @@
                 var d = data[key];
                 var longUrl = d.longUrl.replace('http://', '');
                 if( d.contentType == 'text/html') {
+                    preview.css('width', '256px');
                     var thumb = d.thumbnail.medium;
                     preview.append('<h1>' + d.htmlTitle + '</h1>');
                     preview.append('<div>' + d.htmlMetaDescription + '</div>');
@@ -27,7 +28,7 @@
                     }
                 }
                 if( d.contentType == 'image/jpeg') {
-                    preview.append('<img src="http://' + longUrl + '" style="width: 250px"/>');
+                    preview.append('<img src="http://' + longUrl + '"/>');
                 }
                 if( d.contentType == 'audio/mpeg') {
                     for(var label in d.id3) {
