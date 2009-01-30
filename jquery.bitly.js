@@ -47,11 +47,12 @@ jQuery.fn.bitly = function(action, func, options) {
         }
         urls.push(message);
     });
-
     var xhr = jQuery.post( opts.url, {
         'action' : action,
         'url' : urls.join(',')
-    }, function(data) { return dh.proccess(data);}, 'json');
+    }, function(data) {
+        return dh.proccess(data);
+    }, 'json');
     return xhr;
 };
 
@@ -59,20 +60,33 @@ jQuery.fn.bitly.defaults = {
     url: 'bitly.php'
 };
 
-jQuery.fn.shortenUrl = function() {
+jQuery.fn.shortenUrl = function(func) {
     return this.each( function(){
         var elm = jQuery(this);
         var long = elm.val();
-        if( !long) {
-            return false;
-        }
         
+        // quick and dirty workaround
+        // handled on server side
+        if( !long) {
+            long = ' ';
+        }
         elm.bitly('shorten', function(data) {
-            var re = new RegExp("http://[^( |$|\\])]+", 'g');
+            var re = new RegExp("http://[^( |$|\\]|\")]+", 'g');
             var urls = elm.val().match(re);
+            if(!urls) {
+                urls = new Array();
+            }
             for(var i=0;i<urls.length;i++) {
                 var url = urls[i];
-                elm.val( long.replace(url, data[url].shortUrl));
+                try {
+                    var shortUrl = data[url].shortUrl;
+                    elm.val( elm.val().replace(url, shortUrl));
+                } catch(e) {
+                    // must be bitly URL, ignore
+                }
+            }
+            if( typeof(func) == 'function') {
+                func(data);
             }
         });
     });
@@ -89,9 +103,8 @@ jQuery.fn.addPreview = function(func, options) {
     }, function() {
         xhr.abort();
         jQuery('#preview').fadeOut().remove();
-    });
-
-    jQuery(this).mousemove( function(e) {
+    })
+    .mousemove( function(e) {
         var left = e.pageX + xOffset;
         var top = e.pageY + yOffset;
         jQuery("#preview").css("top", top + "px").css("left", left + "px");
@@ -102,3 +115,4 @@ jQuery.fn.addPreview.defaults = {
     'xOffset': 10,
     'yOffset': 10
 };
+

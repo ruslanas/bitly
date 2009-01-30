@@ -22,9 +22,11 @@ include('config.php');
 include('lib/bitly.class.php');
 
 $bitly = new Bitly($login, $apiKey);
+$action = $_POST['action'];
+$url = $_POST['url'];
 
-if( $bitly->validAction( $_POST['action'])) {
-    echo $bitly->{$_POST['action']}($_POST['url']);
+if( $bitly->validAction($action)) {
+    echo $bitly->{$action}($url);
 } else {
     echo $bitly->error();
 }

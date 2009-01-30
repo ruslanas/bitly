@@ -20,38 +20,46 @@ class Bitly {
     {
         $this->login = $login;
         $this->apiKey = $apiKey;
+        $this->statusCode = 'OK';
+        $this->errorMessage = '';
+        $this->errorCode = '';
     	return true;
     }
 
+    private function setError($message, $code = 101)
+    {
+    	$this->errorCode = $code;
+        $this->errorMessage = $message;
+        $this->statusCode = 'ERROR';
+    }
+    
     public function validAction($action)
     {
         if( in_array($action, $this->validActions)) {
             return true;
         }
-        $this->errorCode = 202;
-        $this->errorMessage = "Undefined method $action";
+        $this->setError("Undefined method $action", 202);
     	return false;
     }
 
     public function error()
     {
-        if( empty( $this->errorMessage) && empty( $this->errorCode)) {
-            return false;
-        }
         $ret = array(
             "errorCode" => $this->errorCode,
             "errorMessage" => $this->errorMessage,
-            "statusCode" => "ERROR"
+            "statusCode" => $this->statusCode
             );
-    	return json_encode($ret);
+        if( $this->statusCode == 'OK') {
+            $ret['results'] = array();
+        }
+        return json_encode($ret);
     }
 
     public function shorten($message)
     {
 
         $postFields = '';
-        
-        preg_match_all("/http(s?):\/\/[^( |$|\]|,|\"|')]+/i", $message, $matches);
+        preg_match_all("/http(s?):\/\/[^( |$|\]|,|\\\)]+/i", $message, $matches);
         
         for($i=0;$i<sizeof( $matches[0]);$i++) {
             $curr = $matches[0][$i];
@@ -61,8 +69,9 @@ class Bitly {
             }
         }
 
+        // nothing to shorten, return empty result
         if( !strlen($postFields)) {
-            return false;
+            return $this->error();
         }
         return $this->process('shorten', $postFields);
     }
