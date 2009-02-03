@@ -2,6 +2,7 @@
 /*
 SOAP client
 Author: Ruslanas Balčiūnas
+http://bitly.googlecode.com
 */
 ini_set("soap.wsdl_cache_enabled", "0");
 

@@ -1,4 +1,9 @@
 <?php
+/*
+SOAP server
+Author: Ruslanas Balčiūnas
+http://bitly.googlecode.com
+*/
 ini_set("soap.wsdl_cache_enabled", "0");
 include('lib/bitly.class.php');
 
