@@ -57,7 +57,7 @@ jQuery.fn.bitly = function(action, func, options) {
 };
 
 jQuery.fn.bitly.defaults = {
-    url: 'bitly.php'
+    url: '/bitly/bitly.php'
 };
 
 jQuery.fn.shortenUrl = function(func) {
@@ -98,8 +98,16 @@ jQuery.fn.addPreview = function(func, options) {
     var yOffset = opts.yOffset;
     var xhr;
     jQuery(this).hover( function() {
-        $('body').append('<div id="preview"/>');
+        var url = $(this).attr('href');
+        if( !url) {
+            return false;
+        }
+        jQuery('body').append('<div id="preview"/>');
+        var box = jQuery('#preview');
+        box.css('position', 'absolute');
+        box.append('<div>' + url + '</div>');
         xhr = jQuery(this).bitly('info', func);
+        box.fadeIn();
     }, function() {
         xhr.abort();
         jQuery('#preview').fadeOut().remove();
