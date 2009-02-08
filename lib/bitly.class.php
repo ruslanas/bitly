@@ -2,6 +2,13 @@
 /*
 Author: Ruslanas Balčiūnas
 http://bitly.googlecode.com
+
+Usage:
+$bitly = new Bitly($login, $apiKey);
+$short = $bitly->shortenSingle('http://bitly.googlecode.com');
+$long = $bitly->expandSingle($long);
+print_r( $bitly->getStatsArray($short));
+
 */
 
 class Bitly {
@@ -49,10 +56,16 @@ class Bitly {
             "errorMessage" => $this->errorMessage,
             "statusCode" => $this->statusCode
             );
+
+        // Function used for passing empty result sometimes.
         if( $this->statusCode == 'OK') {
             $ret['results'] = array();
         }
-        return json_encode($ret);
+        if( $this->format == 'json') {
+            return json_encode($ret);
+        } else {
+            throw new Exception('Unsupported format');
+        }
     }
 
     public function shorten($message)
@@ -117,7 +130,17 @@ class Bitly {
 
     public function setReturnFormat($format)
     {
+        // needed for restoration
+        $this->oldFormat = $this->format;
     	$this->format = $format;
+        return $this->format;
+    }
+
+    private function restoreFormat()
+    {
+        if( !empty( $this->oldFormat)) {
+            $this->format = $this->oldFormat;
+        }
         return $this->format;
     }
 
@@ -134,9 +157,38 @@ class Bitly {
     
     public function shortenSingle($url)
     {
-        $postFields = '&longUrl=' . $url;
-    	$data = json_decode( $this->process('shorten', $postFields), true);
+        $this->setReturnFormat('json');
+    	$data = json_decode( $this->shorten($url), true);
+        // return to previous state.
+        $this->restoreFormat();
         return $data['results'][$url]['shortUrl'];
+    }
+
+    public function expandSingle($shortUrl)
+    {
+        $this->setReturnFormat('json');
+    	$data = json_decode( $this->expand($shortUrl), true);
+        $this->restoreFormat();
+        return $data['results'][ $this->getHash($shortUrl)]['longUrl'];
+    }
+
+    public function getInfoArray($url)
+    {
+        $this->setReturnFormat('json');
+    	$json = $this->info($url);
+        $this->restoreFormat();
+        $data = json_decode($json, true);
+
+        return array_pop( $data['results']);
+    }
+
+    public function getStatsArray($url)
+    {
+        $this->setReturnFormat('json');
+    	$json = $this->stats($url);
+        $this->restoreFormat();
+        $data = json_decode($json, true);
+        return $data['results'];
     }
 }
 ?>
