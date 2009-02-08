@@ -6,8 +6,9 @@ http://bitly.googlecode.com
 Usage:
 $bitly = new Bitly($login, $apiKey);
 $short = $bitly->shortenSingle('http://bitly.googlecode.com');
-$long = $bitly->expandSingle($long);
+$long = $bitly->expandSingle($short);
 print_r( $bitly->getStatsArray($short));
+print_r( $bitly->getInfoArray($long));
 
 */
 
