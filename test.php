@@ -1,4 +1,5 @@
 <?php
+
 require_once('lib/bitly.class.php');
 include('config.php');
 
@@ -11,23 +12,19 @@ try {
     echo $e->getMessage();
 }
 
-$url = $bitly->shortenSingle('http://bitly.googlecode.com');
+$url = $bitly->shortenSingle('http://www.ruslanas.com');
 
 //$bitly->setReturnFormat('xml');
 //echo $bitly->stats($url);
 //exit;
-$info = $bitly->getInfoArray($url);
+$bitly->getInfoArray($url);
+$bitly->getStatsArray($url);
 
-echo '<h1>' . $url . '</h1>';
-echo '<img src="' . $info['thumbnail']['medium'] . '"/>';
-
-$stats = $bitly->getStatsArray($url);
+echo '<h1>' . $bitly->getTitle() . '</h1>';
+echo $bitly->getClicks() . ' clicks<br/>';
+echo '<img src="' . $bitly->getThumbnail('medium') . '"/>';
 
 echo '<h2>Expanded data</h2>';
 echo 'Expanded: ' . $bitly->expandSingle($url);
-
-echo '<pre>';
-print_r($stats);
-echo '</pre>';
 
 ?>

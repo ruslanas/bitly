@@ -180,7 +180,8 @@ class Bitly {
         $this->restoreFormat();
         $data = json_decode($json, true);
 
-        return array_pop( $data['results']);
+        $this->infoArray = array_pop( $data['results']);
+        return $this->infoArray;
     }
 
     public function getStatsArray($url)
@@ -189,7 +190,23 @@ class Bitly {
     	$json = $this->stats($url);
         $this->restoreFormat();
         $data = json_decode($json, true);
-        return $data['results'];
+        $this->statsArray = $data['results'];
+        return $this->statsArray;
+    }
+    
+    function getClicks()
+    {
+    	return $this->statsArray['clicks'];
+    }
+    // get thumbnail (small, middle, large)
+    public function getThumbnail($size = 'small')
+    {
+    	return $this->infoArray['thumbnail'][$size];
+    }
+    
+    public function getTitle()
+    {
+    	return $this->infoArray['htmlTitle'];
     }
 }
 ?>
