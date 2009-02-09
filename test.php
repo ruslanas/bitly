@@ -9,7 +9,7 @@ $bitly->setReturnFormat('xml');
 try {
     $bitly->error();
 } catch (Exception $e) {
-    echo $e->getMessage();
+    echo '<div>' . $e->getMessage() . '</div>';
 }
 
 $url = $bitly->shortenSingle('http://www.ruslanas.com');
@@ -17,6 +17,14 @@ $url = $bitly->shortenSingle('http://www.ruslanas.com');
 //$bitly->setReturnFormat('xml');
 //echo $bitly->stats($url);
 //exit;
+
+// line below generates error
+try {
+    $bitly->getThumbnail();
+} catch(Exception $e) {
+    echo '<div>' . $e->getMessage() . '</div>';
+}
+
 $bitly->getInfoArray($url);
 $bitly->getStatsArray($url);
 

@@ -201,6 +201,12 @@ class Bitly {
     // get thumbnail (small, middle, large)
     public function getThumbnail($size = 'small')
     {
+        if( !in_array($size, array('small', 'medium', 'large'))) {
+            throw new Exception('Invalid size value');
+        }
+        if( empty( $this->infoArray)) {
+            throw new Exception('Info not loaded');
+        }
     	return $this->infoArray['thumbnail'][$size];
     }
     
