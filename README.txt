@@ -1,2 +1,2 @@
 Go to http://code.google.com/p/bitly/ for installation
-instructions and usage esamples.
+instructions and usage examples.
