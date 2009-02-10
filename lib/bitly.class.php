@@ -111,7 +111,7 @@ class Bitly {
         return $this->process('stats', $postFields);
     }
     
-    private function process($action, $postFields) {
+    protected function process($action, $postFields) {
         $ch = curl_init( $this->api . $action); 
         
         $postFields = 'version=' . $this->version . $postFields;

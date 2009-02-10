@@ -35,4 +35,10 @@ echo '<img src="' . $bitly->getThumbnail('medium') . '"/>';
 echo '<h2>Expanded data</h2>';
 echo 'Expanded: ' . $bitly->expandSingle($url);
 
+include('lib/zzgd.class.php');
+$zzgd = new Zzgd();
+$short = $zzgd->shortenSingle('http://www.google.com/');
+echo '<br/>zz.gd: ' . $short;
+echo '<br/>Decrypted: ' . $zzgd->expandSingle($short);
+
 ?>
