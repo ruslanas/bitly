@@ -1,3 +1,9 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+    <title>Test</title>
+</head>
+<body>
 <?php
 
 require_once('lib/bitly.class.php');
@@ -41,4 +47,11 @@ $short = $zzgd->shortenSingle('http://www.google.com/');
 echo '<br/>zz.gd: ' . $short;
 echo '<br/>Decrypted: ' . $zzgd->expandSingle($short);
 
+include('lib/tinyurl.class.php');
+$tinyurl = new Tinyurl();
+$short = $tinyurl->shortenSingle($url);
+echo '<br/><a href="' . $short . '">' . $short . '</a>';
+
 ?>
+</body>
+</html>

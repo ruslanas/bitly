@@ -3,6 +3,7 @@
 Author: Ruslanas Balčiūnas
 http://bitly.googlecode.com
 */
+require_once('bitly.class.php');
 class Zzgd extends Bitly {
     function Zzgd()
     {
