@@ -194,7 +194,7 @@ class Bitly {
         return $this->statsArray;
     }
     
-    function getClicks()
+    public function getClicks()
     {
     	return $this->statsArray['clicks'];
     }
