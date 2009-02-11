@@ -25,8 +25,9 @@ bitlyDataHandler.prototype.onSuccess = function(data) {
 };
 
 bitlyDataHandler.prototype.onError = function(code, message) {
+    // break if firebug enabled
     try {
-        console.info('Bitly error: ' + code + '\n' + message);
+        console.error('Bitly error: ' + code + '\n' + message);
     } catch(e) {
         // .. ignore
     }
@@ -103,10 +104,13 @@ jQuery.fn.addPreview = function(func, options) {
             return false;
         }
         jQuery('body').append('<div id="preview"/>');
-        var box = jQuery('#preview');
-        box.css('position', 'absolute');
-        box.append('<div>' + url + '</div>');
-        xhr = jQuery(this).bitly('info', func);
+        var box = jQuery('#preview')
+            .css('position', 'absolute')
+            .append('<div>' + opts.message + '</div>');
+        xhr = jQuery(this).bitly('info', function(d) {
+                jQuery('#preview *').remove();
+                func(d);
+        });
         box.fadeIn();
     }, function() {
         xhr.abort();
@@ -121,6 +125,7 @@ jQuery.fn.addPreview = function(func, options) {
 
 jQuery.fn.addPreview.defaults = {
     'xOffset': 10,
-    'yOffset': 10
+    'yOffset': 10,
+    'message': 'Loading...'
 };
 

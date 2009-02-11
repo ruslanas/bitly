@@ -12,3 +12,8 @@
     font-size: 1em;
     text-align: center;
 }
+
+#preview div span {
+    float: left;
+    width: 90px;
+}

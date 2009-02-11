@@ -15,8 +15,8 @@
         $.fn.bitly.defaults.url = '/bitly/bitly.php';
         
         function infoHandler(data) {
+            var preview = $('#preview');
             for(var key in data) {
-                var preview = $('#preview');
                 var d = data[key];
                 var longUrl = d.longUrl.replace('http://', '');
                 if( d.contentType.match('text/html')) {
@@ -38,7 +38,7 @@
                 }
                 if( d.contentType == 'audio/mpeg') {
                     for(var label in d.id3) {
-                        preview.append('<div><span style="float: left;width:70px">' + label + ':</span> ' + d.id3[label] + '</div>');
+                        preview.append('<div><span>' + label + ':</span> ' + d.id3[label] + '</div>');
                     }
                     if(d.contentLength) {
                         var size = Math.round( d.contentLegth / 1024);
@@ -63,7 +63,7 @@
         
         $(document).ready( function() {
             updateCounter();
-            $('div.shortened a').addPreview(infoHandler);
+            $('div.shortened a').addPreview(infoHandler, {'message':'Loading data...'});
             $('#msg').keyup( function() {
                 updateCounter();
             });
