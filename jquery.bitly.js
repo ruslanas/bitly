@@ -64,26 +64,17 @@ jQuery.fn.bitly.defaults = {
 jQuery.fn.shortenUrl = function(func) {
     return this.each( function(){
         var elm = jQuery(this);
-        var long = elm.val();
-        
-        // quick and dirty workaround
-        // handled on server side
-        if( !long) {
-            long = ' ';
-        }
+
         elm.bitly('shorten', function(data) {
             var re = new RegExp("http://[^( |$|\\]|\")]+", 'g');
             var urls = elm.val().match(re);
-            if(!urls) {
-                urls = new Array();
-            }
-            for(var i=0;i<urls.length;i++) {
-                var url = urls[i];
-                try {
-                    var shortUrl = data[url].shortUrl;
-                    elm.val( elm.val().replace(url, shortUrl));
-                } catch(e) {
-                    // must be bitly URL, ignore
+            if(urls) {
+                for(var i=0;i<urls.length;i++) {
+                    var url = urls[i];
+                    if( typeof( data[url]) != 'undefined') {
+                        var shortUrl = data[url].shortUrl;
+                        elm.val( elm.val().replace(url, shortUrl));
+                    }
                 }
             }
             if( typeof(func) == 'function') {
