@@ -13,45 +13,60 @@
         //<!--
         
         $.fn.bitly.defaults.url = '/bitly/bitly.php';
-        
         function infoHandler(data) {
-            var preview = $('#preview');
-            for(var key in data) {
-                var d = data[key];
-                var longUrl = d.longUrl.replace('http://', '');
-                if( d.contentType.match('text/html')) {
-                    var thumb = d.thumbnail.medium;
-                    preview.css('width', '256px')
-                        .append('<h1>' + d.htmlTitle + '</h1>')
-                        .append('<div>' + d.htmlMetaDescription + '</div>');
-                    if(thumb) {
-                        var img = new Image();
-                        $(img).error(function(){})
-                            .attr('src', thumb)
-                            .load( function() {
-                                preview.append(this);
-                            });
-                    }
+            var cth = new contentTypeHandler();
+            var prw = $('#preview');
+            cth.register('html', function(d) {
+                var thumb = d.thumbnail.medium;
+                prw.css('width', '256px')
+                    .append('<h1>' + d.htmlTitle + '</h1>')
+                    .append('<div>' + d.htmlMetaDescription + '</div>');
+                if(thumb) {
+                    var img = new Image();
+                    $(img).error(function(){})
+                        .attr('src', thumb)
+                        .load( function() {
+                            prw.append(this);
+                        });
                 }
-                if( d.contentType == 'image/jpeg') {
-                    preview.append('<img src="' + d.longUrl + '"/>');
-                }
-                if( d.contentType == 'audio/mpeg') {
+            });
+            cth.register('jpeg', function(d) {
+                    prw.append('<img src="' + d.longUrl + '"/>');
+                });
+            cth.register('mpeg', function(d) {
                     for(var label in d.id3) {
-                        preview.append('<div><span>' + label + ':</span> ' + d.id3[label] + '</div>');
+                        prw.append('<div><span>' + label + ':</span> ' + d.id3[label] + '</div>');
                     }
                     if(d.contentLength) {
                         var size = Math.round( d.contentLegth / 1024);
-                        preview.append('<div>Size: ' + size + ' Kb</div>');
+                        prw.append('<div>Size: ' + size + ' Kb</div>');
                     }
-                }
-        
-                if( longUrl.length > 25) {
-                    longUrl = longUrl.substring(0, 25) + '&raquo;';
-                }
-                preview.append('<div>Source: ' + longUrl + '</div>');
+                });
+            for(var key in data) {
+                cth.handle( data[key]);
             }
         }
+
+        function contentTypeHandler() {
+            this.contentTypeHandlers = new Array();
+        }
+        
+        contentTypeHandler.prototype.register = function(type, func) {
+            this.contentTypeHandlers[type] = func;
+        }
+        contentTypeHandler.prototype.handle = function(d) {
+            var prw = $('#preview');
+            var longUrl = d.longUrl.replace('http://', '');
+        
+            if( longUrl.length > 25) {
+                longUrl = longUrl.substring(0, 25) + '&raquo;';
+            }
+            var ct = d.contentType.split('/')[1];
+            if( typeof( this.contentTypeHandlers[ct]) != 'undefined') {
+                this.contentTypeHandlers[ct](d);
+            }
+            prw.append('<div>Source: ' + longUrl + '</div>');
+        };
         
         function updateCounter(msg) {
             if( typeof(msg) == 'string') {
@@ -60,7 +75,6 @@
             }
             $('#counter').html('Length: ' + $('#msg').val().length);
         }
-        
         $(document).ready( function() {
             updateCounter();
             $('div.shortened a').addPreview(infoHandler, {'message':'Loading data...'});

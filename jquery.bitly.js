@@ -97,12 +97,12 @@ jQuery.fn.addPreview = function(func, options) {
         jQuery('body').append('<div id="preview"/>');
         var box = jQuery('#preview')
             .css('position', 'absolute')
-            .append('<div>' + opts.message + '</div>');
+            .append('<em>' + opts.message + '</em>')
+            .fadeIn();
         xhr = jQuery(this).bitly('info', function(d) {
-                jQuery('#preview *').remove();
+                box.children().remove();
                 func(d);
         });
-        box.fadeIn();
     }, function() {
         xhr.abort();
         jQuery('#preview').fadeOut().remove();
