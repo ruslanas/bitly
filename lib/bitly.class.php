@@ -156,13 +156,18 @@ class Bitly {
         return $hash;
     }
     
-    public function shortenSingle($url)
+    public function shortenSingle($message)
     {
         $this->setReturnFormat('json');
-    	$data = json_decode( $this->shorten($url), true);
+    	$data = json_decode( $this->shorten($message), true);
         // return to previous state.
         $this->restoreFormat();
-        return $data['results'][$url]['shortUrl'];
+        
+        // replace every long url with short one
+        foreach($data['results'] as $url => $d) {
+            $message = str_replace($url, $d['shortUrl'], $message);
+        }
+        return $message;
     }
 
     public function expandSingle($shortUrl)
