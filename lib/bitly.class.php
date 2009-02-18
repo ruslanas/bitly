@@ -1,6 +1,6 @@
 <?php
 /*
-Copytight © 2008, 2009 Ruslanas Balčiūnas
+Copyright © 2008, 2009 Ruslanas Balčiūnas
 Email: ruslanas.com@gmail.com
 Blog: http://bitly.blogspot.com/
 http://bitly.googlecode.com
