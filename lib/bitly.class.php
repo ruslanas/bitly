@@ -116,6 +116,7 @@ class Bitly {
         
         $postFields = 'version=' . $this->version . $postFields;
         $postFields .= '&format=' . $this->format;
+        $postFields .= '&history=1';
 
         curl_setopt($ch, CURLOPT_USERPWD, $this->login . ':' . $this->apiKey);
         curl_setopt($ch, CURLOPT_POST, 1);
