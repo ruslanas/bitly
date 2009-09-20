@@ -34,8 +34,8 @@ function errorHandler($errno, $errstr, $errfile, $errline)
 
 $oldErrorHandler = set_error_handler('errorHandler');
 
-include('config.php');
-include('lib/bitly.class.php');
+require_once('config.php');
+require_once('lib/bitly.class.php');
 
 $bitly = new Bitly($login, $apiKey);
 $action = $_POST['action'];
