@@ -30,6 +30,8 @@ print_r( $bitly->getInfoArray($long));
 class Bitly {
 
     protected $api = 'http://api.bit.ly/';
+    private $login;
+    private $apiKey;
     private $format = 'json';
     private $version = '2.0.1';
     private $validActions = array(
@@ -39,23 +41,37 @@ class Bitly {
         'expand'
         );
 
-    public function Bitly($login, $apiKey)
+    /**
+     *
+     * @param string $login
+     * @param string $apiKey
+     */
+    public function __construct($login, $apiKey)
     {
         $this->login = $login;
         $this->apiKey = $apiKey;
         $this->statusCode = 'OK';
         $this->errorMessage = '';
         $this->errorCode = '';
-    	return true;
     }
 
+    /**
+     *
+     * @param string $message
+     * @param int $code
+     */
     private function setError($message, $code = 101)
     {
     	$this->errorCode = $code;
         $this->errorMessage = $message;
         $this->statusCode = 'ERROR';
     }
-    
+
+    /**
+     * Check if action supported
+     * @param string $action
+     * @return bool
+     */
     public function validAction($action)
     {
         if( in_array($action, $this->validActions)) {
@@ -65,6 +81,10 @@ class Bitly {
     	return false;
     }
 
+    /**
+     * Return JSON encoded error message
+     * @return string
+     */
     public function error()
     {
         $ret = array(
@@ -84,6 +104,11 @@ class Bitly {
         }
     }
 
+    /**
+     *
+     * @param string $message
+     * @return string
+     */
     public function shorten($message)
     {
 
@@ -105,12 +130,22 @@ class Bitly {
         return $this->process('shorten', $postFields);
     }
 
+    /**
+     *
+     * @param string $message
+     * @return string
+     */
     public function expand($message)
     {
         $postFields = '&hash=' . $this->getHash($message);
     	return $this->process('expand', $postFields);
     }
 
+    /**
+     *
+     * @param string $bitlyUrl
+     * @return string
+     */
     public function info($bitlyUrl)
     {
         $hash = $this->getHash($bitlyUrl);
@@ -118,6 +153,11 @@ class Bitly {
         return $this->process('info', $postFields);
     }
 
+    /**
+     *
+     * @param string $bitlyUrl
+     * @return string
+     */
     public function stats($bitlyUrl)
     {
         // Take only first hash or url. Ignore others.
@@ -125,7 +165,13 @@ class Bitly {
         $postFields = '&hash=' . $this->getHash($a[0]);
         return $this->process('stats', $postFields);
     }
-    
+
+    /**
+     *
+     * @param string $action
+     * @param string $postFields
+     * @return string
+     */
     protected function process($action, $postFields) {
         $ch = curl_init( $this->api . $action); 
         
@@ -145,6 +191,11 @@ class Bitly {
         return $response;
     }
 
+    /**
+     * Set return formal XML or JSON
+     * @param string $format
+     * @return string
+     */
     public function setReturnFormat($format)
     {
         // needed for restoration
@@ -153,6 +204,10 @@ class Bitly {
         return $this->format;
     }
 
+    /**
+     *
+     * @return string
+     */
     private function restoreFormat()
     {
         if( !empty( $this->oldFormat)) {
@@ -161,7 +216,12 @@ class Bitly {
         return $this->format;
     }
 
-    // expect url, shortened url or hash
+    /**
+     * Expect url, shortened url or hash
+     *
+     * @param string $message
+     * @return string
+     */
     public function getHash($message)
     {
         // if url and not bit.ly get shortened first
@@ -171,7 +231,12 @@ class Bitly {
         $hash = str_replace('http://bit.ly/', '', $message);
         return $hash;
     }
-    
+
+    /**
+     *
+     * @param string $message
+     * @return string
+     */
     public function shortenSingle($message)
     {
         $this->setReturnFormat('json');
@@ -186,6 +251,11 @@ class Bitly {
         return $message;
     }
 
+    /**
+     *
+     * @param string $shortUrl
+     * @return string
+     */
     public function expandSingle($shortUrl)
     {
         $this->setReturnFormat('json');
@@ -194,6 +264,11 @@ class Bitly {
         return $data['results'][ $this->getHash($shortUrl)]['longUrl'];
     }
 
+    /**
+     *
+     * @param string $url
+     * @return array
+     */
     public function getInfoArray($url)
     {
         $this->setReturnFormat('json');
@@ -205,6 +280,11 @@ class Bitly {
         return $this->infoArray;
     }
 
+    /**
+     *
+     * @param string $url
+     * @return array
+     */
     public function getStatsArray($url)
     {
         $this->setReturnFormat('json');
@@ -214,12 +294,21 @@ class Bitly {
         $this->statsArray = $data['results'];
         return $this->statsArray;
     }
-    
+
+    /**
+     *
+     * @return int
+     */
     public function getClicks()
     {
     	return $this->statsArray['clicks'];
     }
-    // get thumbnail (small, middle, large)
+
+    /**
+     * Get thumbnail (small, middle, large)
+     * @param string $size
+     * @return string
+     */
     public function getThumbnail($size = 'small')
     {
         if( !in_array($size, array('small', 'medium', 'large'))) {
@@ -230,7 +319,11 @@ class Bitly {
         }
     	return $this->infoArray['thumbnail'][$size];
     }
-    
+
+    /**
+     *
+     * @return string
+     */
     public function getTitle()
     {
     	return $this->infoArray['htmlTitle'];
