@@ -24,9 +24,11 @@ $short = $bitly->shortenSingle('http://bitly.googlecode.com');
 $long = $bitly->expandSingle($short);
 print_r( $bitly->getStatsArray($short));
 print_r( $bitly->getInfoArray($long));
-
 */
 
+/**
+ * Bit.ly API
+ */
 class Bitly {
 
     protected $api = 'http://api.bit.ly/';
@@ -42,7 +44,7 @@ class Bitly {
         );
 
     /**
-     *
+     * Initialize
      * @param string $login
      * @param string $apiKey
      */
@@ -56,7 +58,7 @@ class Bitly {
     }
 
     /**
-     *
+     * Ser error message
      * @param string $message
      * @param int $code
      */
@@ -105,7 +107,7 @@ class Bitly {
     }
 
     /**
-     *
+     * Shorten message with any number of links
      * @param string $message
      * @return string
      */
@@ -131,7 +133,7 @@ class Bitly {
     }
 
     /**
-     *
+     * Get long URL
      * @param string $message
      * @return string
      */
@@ -142,7 +144,7 @@ class Bitly {
     }
 
     /**
-     *
+     * Get URL info
      * @param string $bitlyUrl
      * @return string
      */
@@ -154,7 +156,7 @@ class Bitly {
     }
 
     /**
-     *
+     * Get stats for URL
      * @param string $bitlyUrl
      * @return string
      */
