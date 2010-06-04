@@ -8,7 +8,7 @@ require_once('bitly.class.php');
 class Zzgd extends Bitly {
     function __construct()
     {
-        $this->api = 'http://zz.gd/';
+        $this->_api = 'http://zz.gd/';
     }
     public function shortenSingle($url)
     {

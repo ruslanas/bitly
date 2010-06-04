@@ -3,7 +3,7 @@ require_once('bitly.class.php');
 class Tinyurl extends Bitly {
     function __construct()
     {
-    	$this->api = 'http://tinyurl.com/';
+    	$this->_api = 'http://tinyurl.com/';
     }
     
     public function shortenSingle($url)
