@@ -17,17 +17,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Usage:
-$bitly = new Bitly($login, $apiKey);
-$short = $bitly->shortenSingle('http://bitly.googlecode.com');
-$long = $bitly->expandSingle($short);
-print_r( $bitly->getStatsArray($short));
-print_r( $bitly->getInfoArray($long));
 */
 
 /**
  * Bit.ly API
+ *
+ * <code>
+ * $bitly = new Bitly($login, $apiKey);
+ * $short = $bitly->shortenSingle('http://bitly.googlecode.com');
+ * $long = $bitly->expandSingle($short);
+ * print_r( $bitly->getStatsArray($short));
+ * print_r( $bitly->getInfoArray($long));
+ * </code>
  */
 class Bitly
 {
@@ -174,6 +175,7 @@ class Bitly
      * @param string $action
      * @param string $postFields
      * @return string
+     * @throws Exception If cURL session fails.
      */
     protected function process($action, $postFields)
     {
