@@ -79,23 +79,13 @@ class Bitly
      * @param string $message
      * @return string
      */
-    public function shorten($message)
+    public function shorten($url)
     {
-        $postFields = '';
-        $pattern = "/http(s?):\/\/[^( |$|\]|,|\\\)]+/i";
-        preg_match_all($pattern, $message, $matches);
-        for ($i=0;$i<sizeof($matches[0]);$i++) {
-            $curr = $matches[0][$i];
-            // ignore bitly urls
-            if (!strstr($curr, 'http://bit.ly')) {
-                $postFields .= '&longUrl=' . urlencode($curr);
-            }
+        if(gettype($url) === 'array') {
+            throw new Exception('Array not supported.');
         }
-
-        if (strlen($postFields) == 0) {
-            return $message;
-        }
-        return $this->process('shorten', $postFields);
+        $data = $this->process('shorten', $this->prepareParams($url, 'longUrl'));
+        return $data;
     }
     /**
      * Get long URL
@@ -131,10 +121,18 @@ class Bitly
         return $data->clicks_by_minute;
     }
     public function clicksByDay($url) {
-        return $this->process('clicks_by_day', 'shortUrl='.urlencode($url));
+        $data = $this->process('clicks_by_day', $this->prepareParams($url));
+        return $data->clicks_by_day;
     }
+
+    /**
+     *
+     * @param string $domain
+     * @return int
+     */
     public function isProDomain($domain) {
-        return $this->process('bitly_pro_domain', 'domain='.urlencode($domain));
+        $data = $this->process('bitly_pro_domain', 'domain='.urlencode($domain));
+        return $data->bitly_pro_domain;
     }
     public function lookup($url) {
         $data = $this->process('lookup', $this->prepareParams($url, 'url'));
