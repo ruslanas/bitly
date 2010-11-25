@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * <code>
  * $bitly = new Bitly($login, $apiKey);
- * if($bitly->shortenSingle('http://www.opposedto.com/')) {
+ * if($bitly->shortenSingle('http://www.opposeto.com/')) {
  *     $bitly->error();
  * }
  * </code>
