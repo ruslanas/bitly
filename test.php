@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
@@ -7,6 +8,7 @@
 <?php
 
 require_once('lib/bitly.class.php');
+
 include('config.php');
 
 $bitly = new Bitly($login, $apiKey);
